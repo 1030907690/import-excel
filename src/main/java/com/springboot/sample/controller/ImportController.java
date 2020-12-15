@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 
 @Controller
@@ -15,29 +14,40 @@ public class ImportController {
      * 用户上传头像
      */
     @RequestMapping("/import")
-    public String importFile(HttpServletRequest request, @RequestParam("file") MultipartFile image) {
-        Integer userId = 0;
-        String username = "";
+    public String importFile(@RequestParam("userFile") MultipartFile userFile, @RequestParam("customerFile") MultipartFile customerFile) {
+
         try {
-            if (userId != null  && image != null && !image.isEmpty()) {
-                String name = image.getOriginalFilename();
-                int index = name != null ? name.lastIndexOf(".") : -1;
-                String type = index > 0 ? name.substring(index) : "";
-                String path = "excel/" + userId + "_" + System.currentTimeMillis() + type;
-                File file = new File(System.getProperty("user.dir"), path);
-                if (!file.getParentFile().exists() && file.getParentFile().mkdirs()) {
-                    System.out.printf("创建头像保存目录：" + file.getAbsolutePath());
-                }
-                image.transferTo(file);
-                System.out.printf("上传成功");
-                return "index";
-            } else {
-                System.out.printf("其他");
-                return "index";
-            }
+            saveFile(userFile,0);
+            saveFile(customerFile,1);
+            return "index";
         } catch (Exception e) {
-            System.out.printf("异常");
+            System.out.println("异常");
             return "index";
         }
+
+    }
+
+
+    private String saveFile(MultipartFile customerFile, Integer fileType) {
+        try {
+            if (fileType != null && customerFile != null && !customerFile.isEmpty()) {
+                String name = customerFile.getOriginalFilename();
+                int index = name != null ? name.lastIndexOf(".") : -1;
+                String type = index > 0 ? name.substring(index) : "";
+                String path = "excel/" + fileType + "_" + System.currentTimeMillis() + type;
+                File file = new File(System.getProperty("user.dir"), path);
+                if (!file.getParentFile().exists() && file.getParentFile().mkdirs()) {
+                    System.out.println("创建头像保存目录：" + file.getAbsolutePath());
+                }
+                customerFile.transferTo(file);
+                System.out.println("上传成功");
+                return file.getAbsolutePath();
+            } else {
+                System.out.println("文件其他异常");
+            }
+        } catch (Exception e) {
+            System.out.println("异常");
+        }
+        return null;
     }
 }
