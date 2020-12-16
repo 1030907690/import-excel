@@ -2,7 +2,7 @@ package com.springboot.sample.service;
 
 import cn.afterturn.easypoi.excel.ExcelImportUtil;
 import cn.afterturn.easypoi.excel.entity.ImportParams;
-import com.springboot.sample.bean.CustomerService;
+import com.springboot.sample.bean.CustomerServicePo;
 import com.springboot.sample.bean.UserFourPo;
 import com.springboot.sample.bean.UserMeiQiaPo;
 import org.apache.commons.lang3.StringUtils;
@@ -40,26 +40,26 @@ public class Reader {
         return userObjects;
     }
 
-    public static List<CustomerService> customerService() {
+    public static List<CustomerServicePo> customerService() {
         File file = new File("D:\\work\\excel\\temp\\顾问服务客户数据表201214.xlsx");
         ImportParams importParams = new ImportParams();
         importParams.setTitleRows(0);
         importParams.setHeadRows(1);
         importParams.setSheetNum(1);
-        List<CustomerService> userObjects = ExcelImportUtil.importExcel(file, CustomerService.class, importParams);
+        List<CustomerServicePo> userObjects = ExcelImportUtil.importExcel(file, CustomerServicePo.class, importParams);
         return userObjects;
     }
 
-    public static List<Map<String, CustomerService>> transferMap(List<CustomerService> customerServices) {
-        List<Map<String, CustomerService>> result = new ArrayList<>();
-        Map<String, CustomerService> resultGuest = new HashMap<>();
-        Map<String, CustomerService> resultMobile = new HashMap<>();
-        for (CustomerService customerService : customerServices) {
-            if (StringUtils.isNotBlank(customerService.getGuestId())) {
-                resultGuest.put(customerService.getGuestId(), customerService);
+    public static List<Map<String, CustomerServicePo>> transferMap(List<CustomerServicePo> customerServicePos) {
+        List<Map<String, CustomerServicePo>> result = new ArrayList<>();
+        Map<String, CustomerServicePo> resultGuest = new HashMap<>();
+        Map<String, CustomerServicePo> resultMobile = new HashMap<>();
+        for (CustomerServicePo customerServicePo : customerServicePos) {
+            if (StringUtils.isNotBlank(customerServicePo.getGuestId())) {
+                resultGuest.put(customerServicePo.getGuestId(), customerServicePo);
             }
-            if (StringUtils.isNotBlank(customerService.getMobile())) {
-                resultMobile.put(customerService.getMobile(), customerService);
+            if (StringUtils.isNotBlank(customerServicePo.getMobile())) {
+                resultMobile.put(customerServicePo.getMobile(), customerServicePo);
             }
         }
         result.add(resultGuest);
@@ -70,17 +70,17 @@ public class Reader {
 
 
     public static void main(String[] args) {
-        List<CustomerService> customerServices = customerService();
-        List<Map<String, CustomerService>> maps = transferMap(customerServices);
-        Map<String, CustomerService> resultGuest = maps.get(0); // 访客id
-        Map<String, CustomerService> resultMobile = maps.get(1); // 手机号
+        List<CustomerServicePo> customerServicePos = customerService();
+        List<Map<String, CustomerServicePo>> maps = transferMap(customerServicePos);
+        Map<String, CustomerServicePo> resultGuest = maps.get(0); // 访客id
+        Map<String, CustomerServicePo> resultMobile = maps.get(1); // 手机号
 
 
         List<UserMeiQiaPo> userMeiQiaPos = meiQia();
         int meiQiaMatchLength = 0;
         for (UserMeiQiaPo userMeiQiaPo : userMeiQiaPos) {
-            CustomerService customerService = resultGuest.getOrDefault(userMeiQiaPo.getGuestId(), null);
-            if (null != customerService){
+            CustomerServicePo customerServicePo = resultGuest.getOrDefault(userMeiQiaPo.getGuestId(), null);
+            if (null != customerServicePo){
                 meiQiaMatchLength++;
             }
         }
@@ -90,8 +90,8 @@ public class Reader {
         List<UserFourPo> four = four();
         int fourMatchLength = 0;
         for (UserFourPo userFourPo : four) {
-            CustomerService customerService = resultMobile.getOrDefault(userFourPo.getMobile(), null);
-            if (null != customerService){
+            CustomerServicePo customerServicePo = resultMobile.getOrDefault(userFourPo.getMobile(), null);
+            if (null != customerServicePo){
                 fourMatchLength++;
             }
         }

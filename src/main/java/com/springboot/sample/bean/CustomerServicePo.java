@@ -4,9 +4,9 @@ import cn.afterturn.easypoi.excel.annotation.Excel;
 import lombok.Data;
 
 @Data
-public class CustomerService {
+public class CustomerServicePo {
 
-    @Excel(name = "案件基本情况_序号")
+    @Excel(name = "序号")
     private String id;
 
     @Excel(name = "首次接触时间",importFormat = "yyyy/MM/dd")
