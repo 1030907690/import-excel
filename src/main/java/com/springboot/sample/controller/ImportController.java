@@ -1,19 +1,28 @@
 package com.springboot.sample.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.FutureTask;
 
+@Slf4j
 @Controller
 public class ImportController {
 
+    @Resource
+    private ExecutorService executorService;
+
     /**
-     * 用户上传头像
+     * 上传文件
      */
     @RequestMapping("/import")
     public String importFile(@RequestParam("userFile") MultipartFile userFile, @RequestParam("customerFile") MultipartFile customerFile) {
@@ -24,7 +33,7 @@ public class ImportController {
             FutureTask<String> userFlow = new FutureTask(new Callable() {
                 @Override
                 public String call() throws Exception {
-                    return saveFile(userFile,0);
+                    return saveFile(userFile, 0);
                 }
             });
 
@@ -32,10 +41,12 @@ public class ImportController {
             FutureTask<String> customerService = new FutureTask(new Callable() {
                 @Override
                 public String call() throws Exception {
-                    return saveFile(customerFile,1);
+                    return saveFile(customerFile, 1);
                 }
             });
 
+            executorService.execute(userFlow);
+            executorService.execute(customerService);
 
             String userFlowRes = userFlow.get();
             String customerServiceRes = customerService.get();
