@@ -22,7 +22,7 @@ public class UserFlowReaderServiceImpl {
         ImportParams importParams = new ImportParams();
         importParams.setTitleRows(0);
         importParams.setHeadRows(2);
-        importParams.setStartSheetIndex(1);
+        importParams.setStartSheetIndex(0);
         importParams.setSheetNum(1);
         List<UserFlowMeiQia> userObjects = ExcelImportUtil.importExcel(file, UserFlowMeiQia.class, importParams);
         System.out.println(userObjects.size());
