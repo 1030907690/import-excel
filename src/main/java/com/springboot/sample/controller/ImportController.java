@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
 
 @Controller
 public class ImportController {
@@ -17,8 +19,26 @@ public class ImportController {
     public String importFile(@RequestParam("userFile") MultipartFile userFile, @RequestParam("customerFile") MultipartFile customerFile) {
 
         try {
-            saveFile(userFile,0);
-            saveFile(customerFile,1);
+
+
+            FutureTask<String> userFlow = new FutureTask(new Callable() {
+                @Override
+                public String call() throws Exception {
+                    return saveFile(userFile,0);
+                }
+            });
+
+
+            FutureTask<String> customerService = new FutureTask(new Callable() {
+                @Override
+                public String call() throws Exception {
+                    return saveFile(customerFile,1);
+                }
+            });
+
+
+            String userFlowRes = userFlow.get();
+            String customerServiceRes = customerService.get();
             return "index";
         } catch (Exception e) {
             System.out.println("异常");
