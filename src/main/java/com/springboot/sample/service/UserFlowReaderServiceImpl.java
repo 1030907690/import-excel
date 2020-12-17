@@ -13,7 +13,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class UserFlowServiceImpl {
+public class UserFlowReaderServiceImpl {
 
     String filePath = "D:\\work\\excel\\temp\\用户全流程服务跟踪表模板 12.16（终）.xlsx";
     File file = new File(filePath);
@@ -51,7 +51,7 @@ public class UserFlowServiceImpl {
 
 
     public static void main(String[] args) {
-        UserFlowServiceImpl userFlowServiceImpl = new UserFlowServiceImpl();
+        UserFlowReaderServiceImpl userFlowServiceImpl = new UserFlowReaderServiceImpl();
         userFlowServiceImpl.readerUserFlowCallAExcel();
     }
 }

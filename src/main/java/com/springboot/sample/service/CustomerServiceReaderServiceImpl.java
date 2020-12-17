@@ -14,7 +14,7 @@ import java.util.Map;
 
 @Slf4j
 @Service
-public class CustomerServiceImpl {
+public class CustomerServiceReaderServiceImpl {
 
     String filePath = "D:\\work\\excel\\temp\\顾问服务客户数据表201215.xlsx";
     File file = new File(filePath);
@@ -49,7 +49,7 @@ public class CustomerServiceImpl {
     }
 
     public static void main(String[] args) {
-        CustomerServiceImpl customerServiceImpl = new CustomerServiceImpl();
+        CustomerServiceReaderServiceImpl customerServiceImpl = new CustomerServiceReaderServiceImpl();
         customerServiceImpl.group(customerServiceImpl.readerCustomerAExcel());
     }
 }
