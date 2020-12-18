@@ -63,6 +63,27 @@ public class MatchingServiceImpl {
     }
 
 
+    /***
+     * zzq
+     * 400匹配
+     * 2020年12月18日16:26:45
+     * */
+    public List<UserFlowCallAWrapper> callAMatch(List<UserFlowCallA> userFlowCallAList, Map<String, List<CustomerService>> group) {
+        List<UserFlowCallAWrapper> userFlowMeiQiaWrapperList = new ArrayList<>();
+        List<CustomerService> customerServiceList = group.getOrDefault(CustomerOriginEnum.CALL_A.getCode(), new ArrayList<>());
+        if (null != userFlowCallAList) {
+            for (UserFlowCallA userFlowFourA : userFlowCallAList) {
+                UserFlowCallAWrapper userFlowCallAWrapper = new UserFlowCallAWrapper();
+                MatchResult matchResult = matchMobile(userFlowFourA.getMobile(), customerServiceList);
+                BeanUtils.copyProperties(userFlowFourA, userFlowCallAWrapper);
+                userFlowCallAWrapper.setMatchResult(matchResult);
+                userFlowMeiQiaWrapperList.add(userFlowCallAWrapper);
+            }
+        }
+        return userFlowMeiQiaWrapperList;
+    }
+
+
     public MatchResult matchGuestId(String guestId, List<CustomerService> customerServiceList) {
         MatchResult matchResult = new MatchResult();
         matchResult.setMatchResultCauseEnum(MatchResultCauseEnum.NOT_FOUND);
@@ -115,6 +136,21 @@ public class MatchingServiceImpl {
         return matchResult;
     }
 
+
+    /***
+     * 待处理
+     * */
+    public void waitHandler(List<UserFlowMeiQiaWrapper> userFlowMeiQiaWrapperList, List<UserFlowFourWrapper> userFlowFourWrapperList, List<UserFlowCallAWrapper> userFlowCallAWrapperList) {
+        List<Object> waitHandler = new ArrayList<>();
+        for (UserFlowMeiQiaWrapper userFlowMeiQiaWrapper : userFlowMeiQiaWrapperList) {
+             if (MatchResultCauseEnum.DUPLICATE == userFlowMeiQiaWrapper.getMatchResult().getMatchResultCauseEnum()){
+
+             }
+        }
+
+    }
+
+
     public static void main(String[] args) {
         MatchingServiceImpl matchingService = new MatchingServiceImpl();
         matchingService.userFlowReaderServiceImpl = new UserFlowReaderServiceImpl();
@@ -122,7 +158,8 @@ public class MatchingServiceImpl {
         matchingService.customerServiceReaderServiceImpl = new CustomerServiceReaderServiceImpl();
         CustomerServiceReaderServiceImpl customerServiceImpl = matchingService.customerServiceReaderServiceImpl;
         Map<String, List<CustomerService>> group = customerServiceImpl.group(customerServiceImpl.readerCustomerExcel(customerServiceImpl.filePath));
-        matchingService.meiQiaMatch(userFlowMeiQiaList, group);
+        List<UserFlowMeiQiaWrapper> userFlowMeiQiaWrapperList = matchingService.meiQiaMatch(userFlowMeiQiaList, group);
+
 
     }
 }

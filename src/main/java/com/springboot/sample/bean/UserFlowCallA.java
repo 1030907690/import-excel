@@ -17,6 +17,9 @@ public class UserFlowCallA {
     private String name;
 
 
+    @Excel(name = "手机号")
+    private String mobile;
+
 
 
 }
