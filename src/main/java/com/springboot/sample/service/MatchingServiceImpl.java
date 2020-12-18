@@ -1,9 +1,6 @@
 package com.springboot.sample.service;
 
-import com.springboot.sample.bean.CustomerService;
-import com.springboot.sample.bean.MatchResult;
-import com.springboot.sample.bean.UserFlowMeiQia;
-import com.springboot.sample.bean.UserFlowMeiQiaWrapper;
+import com.springboot.sample.bean.*;
 import com.springboot.sample.common.type.CustomerOriginEnum;
 import com.springboot.sample.common.type.MatchResultCauseEnum;
 import org.springframework.beans.BeanUtils;
@@ -43,6 +40,28 @@ public class MatchingServiceImpl {
         }
         return userFlowMeiQiaWrapperList;
     }
+
+
+    /***
+     * zzq
+     * 400匹配
+     * 2020年12月18日16:26:45
+     * */
+    public List<UserFlowFourWrapper> fourMatch(List<UserFlowFour> userFlowFourList, Map<String, List<CustomerService>> group) {
+        List<UserFlowFourWrapper> userFlowMeiQiaWrapperList = new ArrayList<>();
+        List<CustomerService> customerServiceList = group.getOrDefault(CustomerOriginEnum.FOUR_HUNDRED.getCode(), new ArrayList<>());
+        if (null != userFlowFourList) {
+            for (UserFlowFour userFlowFour : userFlowFourList) {
+                UserFlowFourWrapper userFlowFourWrapper = new UserFlowFourWrapper();
+                MatchResult matchResult = matchMobile(userFlowFour.getMobile(), customerServiceList);
+                BeanUtils.copyProperties(userFlowFour, userFlowFourWrapper);
+                userFlowFourWrapper.setMatchResult(matchResult);
+                userFlowMeiQiaWrapperList.add(userFlowFourWrapper);
+            }
+        }
+        return userFlowMeiQiaWrapperList;
+    }
+
 
     public MatchResult matchGuestId(String guestId, List<CustomerService> customerServiceList) {
         MatchResult matchResult = new MatchResult();
@@ -104,5 +123,6 @@ public class MatchingServiceImpl {
         CustomerServiceReaderServiceImpl customerServiceImpl = matchingService.customerServiceReaderServiceImpl;
         Map<String, List<CustomerService>> group = customerServiceImpl.group(customerServiceImpl.readerCustomerExcel(customerServiceImpl.filePath));
         matchingService.meiQiaMatch(userFlowMeiQiaList, group);
+
     }
 }

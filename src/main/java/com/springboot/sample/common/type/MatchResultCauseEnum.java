@@ -10,9 +10,9 @@ import java.util.Optional;
  * */
 public enum MatchResultCauseEnum {
 
-    SUCCESS("", ""),
-    NOT_FOUND("", ""),
-    DUPLICATE("数据重复", "数据重复");
+    SUCCESS("SUCCESS", ""),
+    NOT_FOUND("NOT_FOUND", ""),
+    DUPLICATE("DUPLICATE", "数据重复");
 
 
     private String code;
