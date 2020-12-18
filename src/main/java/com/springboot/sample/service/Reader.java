@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Deprecated
 public class Reader {
 
     public static List<UserMeiQiaPo> meiQia() {

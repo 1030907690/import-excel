@@ -20,7 +20,7 @@ public class CustomerServiceReaderServiceImpl {
 
 
 
-    public List<CustomerService> readerCustomerAExcel(String filePath) {
+    public List<CustomerService> readerCustomerExcel(String filePath) {
         File file = new File(filePath);
         ImportParams importParams = new ImportParams();
         importParams.setTitleRows(0);
@@ -51,6 +51,6 @@ public class CustomerServiceReaderServiceImpl {
 
     public static void main(String[] args) {
         CustomerServiceReaderServiceImpl customerServiceImpl = new CustomerServiceReaderServiceImpl();
-        customerServiceImpl.group(customerServiceImpl.readerCustomerAExcel(customerServiceImpl.filePath));
+        customerServiceImpl.group(customerServiceImpl.readerCustomerExcel(customerServiceImpl.filePath));
     }
 }
