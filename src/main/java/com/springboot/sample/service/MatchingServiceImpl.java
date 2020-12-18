@@ -3,8 +3,10 @@ package com.springboot.sample.service;
 import com.springboot.sample.bean.CustomerService;
 import com.springboot.sample.bean.MatchResult;
 import com.springboot.sample.bean.UserFlowMeiQia;
+import com.springboot.sample.bean.UserFlowMeiQiaWrapper;
 import com.springboot.sample.common.type.CustomerOriginEnum;
 import com.springboot.sample.common.type.MatchResultCauseEnum;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -22,25 +24,24 @@ public class MatchingServiceImpl {
     private CustomerServiceReaderServiceImpl customerServiceReaderServiceImpl;
 
 
-
     /***
      * zzq
      * 美洽在线匹配
      * 2020年12月18日16:26:45
      * */
-    public void meiQiaMatch(List<UserFlowMeiQia> userFlowMeiQiaList, Map<String, List<CustomerService>> group) {
+    public List<UserFlowMeiQiaWrapper> meiQiaMatch(List<UserFlowMeiQia> userFlowMeiQiaList, Map<String, List<CustomerService>> group) {
+        List<UserFlowMeiQiaWrapper> userFlowMeiQiaWrapperList = new ArrayList<>();
         List<CustomerService> customerServiceList = group.getOrDefault(CustomerOriginEnum.MEI_QIA_ONLINE.getCode(), new ArrayList<>());
         if (null != userFlowMeiQiaList) {
             for (UserFlowMeiQia userFlowMeiQia : userFlowMeiQiaList) {
+                UserFlowMeiQiaWrapper userFlowMeiQiaWrapper = new UserFlowMeiQiaWrapper();
                 MatchResult matchResult = matchGuestId(userFlowMeiQia.getGuestId(), customerServiceList);
-                if (MatchResultCauseEnum.SUCCESS == matchResult.getMatchResultCauseEnum()) {
-                    //TODO 匹配成功
-                    CustomerService customerService = matchResult.getCustomerServices().get(0);
-                } else if (MatchResultCauseEnum.DUPLICATE == matchResult.getMatchResultCauseEnum()) {
-                    //TODO 重复
-                }
+                BeanUtils.copyProperties(userFlowMeiQia, userFlowMeiQiaWrapper);
+                userFlowMeiQiaWrapper.setMatchResult(matchResult);
+                userFlowMeiQiaWrapperList.add(userFlowMeiQiaWrapper);
             }
         }
+        return userFlowMeiQiaWrapperList;
     }
 
     public MatchResult matchGuestId(String guestId, List<CustomerService> customerServiceList) {
@@ -56,13 +57,13 @@ public class MatchingServiceImpl {
                 }
             }
             if (count > 1) {
-                //TODO 有重复
+                //  有重复
                 matchResult.setMatchResultCauseEnum(MatchResultCauseEnum.DUPLICATE);
             } else if (count == 0) {
-                //TODO 没有这个访客
+                //  没有这个访客
                 matchResult.setMatchResultCauseEnum(MatchResultCauseEnum.NOT_FOUND);
             } else if (count == 1) {
-                //TODO 匹配成功
+                //  匹配成功
                 matchResult.setMatchResultCauseEnum(MatchResultCauseEnum.SUCCESS);
             }
         }
@@ -82,13 +83,13 @@ public class MatchingServiceImpl {
                 }
             }
             if (count > 1) {
-                //TODO 有重复
+                //  有重复
                 matchResult.setMatchResultCauseEnum(MatchResultCauseEnum.DUPLICATE);
             } else if (count == 0) {
-                //TODO 没有这个手机号
+                //  没有这个手机号
                 matchResult.setMatchResultCauseEnum(MatchResultCauseEnum.NOT_FOUND);
             } else if (count == 1) {
-                //TODO 匹配成功
+                //  匹配成功
                 matchResult.setMatchResultCauseEnum(MatchResultCauseEnum.SUCCESS);
             }
         }
