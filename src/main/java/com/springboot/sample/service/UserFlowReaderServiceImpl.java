@@ -16,9 +16,9 @@ import java.util.List;
 public class UserFlowReaderServiceImpl {
 
     String filePath = "D:\\work\\excel\\temp\\用户全流程服务跟踪表模板 12.16（终）.xlsx";
-    File file = new File(filePath);
 
-    public void readerUserFlowMeiQiaExcel() {
+    public List<UserFlowMeiQia> readerUserFlowMeiQiaExcel(String filePath) {
+        File file = new File(filePath);
         ImportParams importParams = new ImportParams();
         importParams.setTitleRows(0);
         importParams.setHeadRows(2);
@@ -26,9 +26,11 @@ public class UserFlowReaderServiceImpl {
         importParams.setSheetNum(1);
         List<UserFlowMeiQia> userObjects = ExcelImportUtil.importExcel(file, UserFlowMeiQia.class, importParams);
         System.out.println(userObjects.size());
+        return userObjects;
     }
 
-    public void readerUserFlowFourExcel() {
+    public List<UserFlowFour> readerUserFlowFourExcel(String filePath) {
+        File file = new File(filePath);
         ImportParams importParams = new ImportParams();
         importParams.setTitleRows(0);
         importParams.setHeadRows(2);
@@ -36,10 +38,12 @@ public class UserFlowReaderServiceImpl {
         importParams.setSheetNum(1);
         List<UserFlowFour> userObjects = ExcelImportUtil.importExcel(file, UserFlowFour.class, importParams);
         System.out.println(userObjects.size());
+        return userObjects;
     }
 
 
-    public void readerUserFlowCallAExcel() {
+    public List<UserFlowCallA> readerUserFlowCallAExcel(String filePath) {
+        File file = new File(filePath);
         ImportParams importParams = new ImportParams();
         importParams.setTitleRows(0);
         importParams.setHeadRows(2);
@@ -47,11 +51,12 @@ public class UserFlowReaderServiceImpl {
         importParams.setSheetNum(1);
         List<UserFlowCallA> userObjects = ExcelImportUtil.importExcel(file, UserFlowCallA.class, importParams);
         log.info("size " + userObjects);
+        return userObjects;
     }
 
 
     public static void main(String[] args) {
         UserFlowReaderServiceImpl userFlowServiceImpl = new UserFlowReaderServiceImpl();
-        userFlowServiceImpl.readerUserFlowCallAExcel();
+        userFlowServiceImpl.readerUserFlowCallAExcel(userFlowServiceImpl.filePath);
     }
 }

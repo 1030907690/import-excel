@@ -17,10 +17,11 @@ import java.util.Map;
 public class CustomerServiceReaderServiceImpl {
 
     String filePath = "D:\\work\\excel\\temp\\顾问服务客户数据表201215.xlsx";
-    File file = new File(filePath);
 
 
-    public List<CustomerService> readerCustomerAExcel() {
+
+    public List<CustomerService> readerCustomerAExcel(String filePath) {
+        File file = new File(filePath);
         ImportParams importParams = new ImportParams();
         importParams.setTitleRows(0);
         importParams.setHeadRows(2);
@@ -50,6 +51,6 @@ public class CustomerServiceReaderServiceImpl {
 
     public static void main(String[] args) {
         CustomerServiceReaderServiceImpl customerServiceImpl = new CustomerServiceReaderServiceImpl();
-        customerServiceImpl.group(customerServiceImpl.readerCustomerAExcel());
+        customerServiceImpl.group(customerServiceImpl.readerCustomerAExcel(customerServiceImpl.filePath));
     }
 }

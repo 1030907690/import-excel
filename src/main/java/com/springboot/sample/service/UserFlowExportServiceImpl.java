@@ -15,7 +15,7 @@ public class UserFlowExportServiceImpl {
 
     private String templateUrl = "D:\\work\\excel\\temp\\用户全流程服务跟踪表模板 12.16（终）template.xlsx";
 
-    public void userFlowExportExcel() throws IOException {
+    public void userFlowExportExcel(String templateUrl) throws IOException {
         TemplateExportParams params = new TemplateExportParams(templateUrl);
         params.setSheetNum(new Integer[]{0,1,2,3});
         Map<String, Object> map = new HashMap<>();
@@ -23,7 +23,6 @@ public class UserFlowExportServiceImpl {
         for (int i = 0; i < 4; i++) {
             Map<String, Object> lm = new HashMap<>();
             lm.put("id", i + 1  );
-
             lm.put("date", "2020/12/1"+i);
             listMap.add(lm);
         }
@@ -53,7 +52,7 @@ public class UserFlowExportServiceImpl {
     public static void main(String[] args) {
         UserFlowExportServiceImpl userFlowExportServiceImpl = new UserFlowExportServiceImpl();
         try {
-            userFlowExportServiceImpl.userFlowExportExcel();
+            userFlowExportServiceImpl.userFlowExportExcel(userFlowExportServiceImpl.templateUrl);
         } catch (IOException e) {
             e.printStackTrace();
         }
