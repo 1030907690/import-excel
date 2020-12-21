@@ -88,7 +88,7 @@ public class MatchingServiceImpl {
         MatchResult matchResult = new MatchResult();
         matchResult.setMatchResultCauseEnum(MatchResultCauseEnum.NOT_FOUND);
         matchResult.setCustomerServices(new ArrayList<>());
-        if (null != null) {
+        if (null != customerServiceList) {
             int count = 0;
             for (CustomerService customerService : customerServiceList) {
                 if (guestId.equals(customerService.getGuestId())) {
@@ -114,7 +114,7 @@ public class MatchingServiceImpl {
         MatchResult matchResult = new MatchResult();
         matchResult.setMatchResultCauseEnum(MatchResultCauseEnum.NOT_FOUND);
         matchResult.setCustomerServices(new ArrayList<>());
-        if (null != null) {
+        if (null != customerServiceList) {
             int count = 0;
             for (CustomerService customerService : customerServiceList) {
                 if (mobile.equals(customerService.getMobile())) {
@@ -140,14 +140,14 @@ public class MatchingServiceImpl {
     /***
      * 待处理
      * */
-    public void waitHandler(List<UserFlowMeiQiaWrapper> userFlowMeiQiaWrapperList, List<UserFlowFourWrapper> userFlowFourWrapperList, List<UserFlowCallAWrapper> userFlowCallAWrapperList) {
-        List<Object> waitHandler = new ArrayList<>();
+    public List<CustomerService> waitHandler(List<UserFlowMeiQiaWrapper> userFlowMeiQiaWrapperList, List<UserFlowFourWrapper> userFlowFourWrapperList, List<UserFlowCallAWrapper> userFlowCallAWrapperList) {
+        List<CustomerService> waitHandlerList = new ArrayList<>();
         for (UserFlowMeiQiaWrapper userFlowMeiQiaWrapper : userFlowMeiQiaWrapperList) {
-             if (MatchResultCauseEnum.DUPLICATE == userFlowMeiQiaWrapper.getMatchResult().getMatchResultCauseEnum()){
-
-             }
+            if (MatchResultCauseEnum.DUPLICATE == userFlowMeiQiaWrapper.getMatchResult().getMatchResultCauseEnum()) {
+                waitHandlerList.addAll(userFlowMeiQiaWrapper.getMatchResult().getCustomerServices());
+            }
         }
-
+        return waitHandlerList;
     }
 
 
@@ -159,7 +159,6 @@ public class MatchingServiceImpl {
         CustomerServiceReaderServiceImpl customerServiceImpl = matchingService.customerServiceReaderServiceImpl;
         Map<String, List<CustomerService>> group = customerServiceImpl.group(customerServiceImpl.readerCustomerExcel(customerServiceImpl.filePath));
         List<UserFlowMeiQiaWrapper> userFlowMeiQiaWrapperList = matchingService.meiQiaMatch(userFlowMeiQiaList, group);
-
 
     }
 }

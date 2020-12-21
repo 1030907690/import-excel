@@ -25,7 +25,7 @@ public class UserFlowReaderServiceImpl {
         importParams.setStartSheetIndex(0);
         importParams.setSheetNum(1);
         List<UserFlowMeiQia> userObjects = ExcelImportUtil.importExcel(file, UserFlowMeiQia.class, importParams);
-        System.out.println(userObjects.size());
+        log.info("美洽size " +userObjects.size());
         return userObjects;
     }
 
@@ -37,7 +37,7 @@ public class UserFlowReaderServiceImpl {
         importParams.setStartSheetIndex(1);
         importParams.setSheetNum(1);
         List<UserFlowFour> userObjects = ExcelImportUtil.importExcel(file, UserFlowFour.class, importParams);
-        System.out.println(userObjects.size());
+        log.info("400 size " +userObjects.size());
         return userObjects;
     }
 
@@ -50,7 +50,7 @@ public class UserFlowReaderServiceImpl {
         importParams.setStartSheetIndex(2);
         importParams.setSheetNum(1);
         List<UserFlowCallA> userObjects = ExcelImportUtil.importExcel(file, UserFlowCallA.class, importParams);
-        log.info("size " + userObjects);
+        log.info("电话A客 size " + userObjects);
         return userObjects;
     }
 
