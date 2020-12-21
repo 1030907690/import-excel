@@ -18,3 +18,8 @@ spring:
       produce-partial-output-while-processing: true # Whether Thymeleaf should start writing partial output as soon as possible or buffer until template processing is finished.
     prefix: classpath:/templates/ # Prefix that gets prepended to view names when building a URL.
     suffix: .html # Suffix that gets appended to view names when building a URL.
+
+
+
+excel:
+  template: D:/work/excel/temp/用户全流程服务跟踪表模板 12.16（终）template.xlsx

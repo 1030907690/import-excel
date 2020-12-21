@@ -8,6 +8,10 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -15,37 +19,42 @@ public class UserFlowExportServiceImpl {
 
     private String templateUrl = "D:\\work\\excel\\temp\\用户全流程服务跟踪表模板 12.16（终）template.xlsx";
 
-    public void userFlowExportExcel(String templateUrl) throws IOException {
+    public Workbook userFlowExportExcel(String templateUrl) throws IOException {
         TemplateExportParams params = new TemplateExportParams(templateUrl);
-        params.setSheetNum(new Integer[]{0,1,2,3});
+        params.setSheetNum(new Integer[]{0, 1, 2, 3});
         Map<String, Object> map = new HashMap<>();
         List<Map<String, Object>> listMap = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             Map<String, Object> lm = new HashMap<>();
-            lm.put("id", i + 1  );
-            lm.put("date", "2020/12/1"+i);
+            lm.put("id", i + 1);
+            lm.put("date", "2020/12/1" + i);
             listMap.add(lm);
         }
         map.put("meiQiaList", listMap);
 
 
-        List<Map<String, Object>>  fourListMap = new ArrayList<>();
+        List<Map<String, Object>> fourListMap = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             Map<String, Object> lm = new HashMap<>();
-            lm.put("id", i + 2  );
-            lm.put("date", "2020/12/1"+i);
+            lm.put("id", i + 2);
+            lm.put("date", "2020/12/1" + i);
             fourListMap.add(lm);
         }
         map.put("fourList", fourListMap);
 
         Workbook workbook = ExcelExportUtil.exportExcel(params, map);
-        File file = new File(System.getProperty("user.dir"), "excel");
+       /* File file = new File(System.getProperty("user.dir"), "out");
         if (!file.exists()) {
             file.mkdir();
         }
-        FileOutputStream fos = new FileOutputStream(file.getPath() + File.separator + "xxx.xlsx");
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        String formatDateTime = now.format(formatter);
+        String filePath = file.getPath() + File.separator + formatDateTime + ".xlsx";
+        FileOutputStream fos = new FileOutputStream(filePath);
         workbook.write(fos);
-        fos.close();
+        fos.close();*/
+        return workbook;
     }
 
 

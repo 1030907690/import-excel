@@ -50,7 +50,7 @@ public class UserFlowReaderServiceImpl {
         importParams.setStartSheetIndex(2);
         importParams.setSheetNum(1);
         List<UserFlowCallA> userObjects = ExcelImportUtil.importExcel(file, UserFlowCallA.class, importParams);
-        log.info("电话A客 size " + userObjects);
+        log.info("电话A客 size " + userObjects.size());
         return userObjects;
     }
 

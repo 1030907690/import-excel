@@ -4,20 +4,22 @@ import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.springboot.sample.bean.*;
 import com.springboot.sample.service.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedOutputStream;
 import java.io.File;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.FutureTask;
 
 @Slf4j
 @Controller
@@ -42,11 +44,17 @@ public class ImportController {
     @Resource
     private ParseDataService parseDataService;
 
+    @Resource
+    private UserFlowExportServiceImpl userFlowExportServiceImpl;
+
+    @Value(value = "${excel.template}")
+    private String excelTemplate;
+
     /**
      * 上传文件
      */
     @RequestMapping("/import")
-    public String importFile(@RequestParam("userFile") MultipartFile userFile, @RequestParam("customerFile") MultipartFile customerFile) {
+    public void importFile(@RequestParam("userFile") MultipartFile userFile, @RequestParam("customerFile") MultipartFile customerFile, HttpServletResponse response) {
         try {
             String[] filePaths = processFileService.uploadFile(userFile, customerFile);
             Map<String, List<CustomerService>> group = customerServiceReaderServiceImpl.group(customerServiceReaderServiceImpl.readerCustomerExcel(filePaths[1]));
@@ -61,12 +69,23 @@ public class ImportController {
             List<UserFlowCallAWrapper> userFlowCallAWrapperList = (List<UserFlowCallAWrapper>) parseDataObject[2];
             //待处理
             List<CustomerService> waitHandlerList = matchingService.waitHandler(userFlowMeiQiaWrapperList, userFlowFourWrapperList, userFlowCallAWrapperList);
+            Workbook workbook = userFlowExportServiceImpl.userFlowExportExcel(excelTemplate);
 
-            log.info("1111");
-            return "index";
+            LocalDateTime now = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+            String formatDateTime = now.format(formatter);
+            response.setHeader("Content-Disposition", "attachment;filename=" + formatDateTime +".xlsx");
+            response.setContentType("application/vnd.ms-excel;charset=UTF-8");
+            response.setHeader("Pragma", "no-cache");
+            response.setHeader("Cache-Control", "no-cache");
+            response.setDateHeader("Expires", 0);
+            BufferedOutputStream bufferedOutPut = new BufferedOutputStream(response.getOutputStream());
+            workbook.write(bufferedOutPut);
+            bufferedOutPut.flush();
+            bufferedOutPut.close();
+            log.info("完成");
         } catch (Exception e) {
-            System.out.println("异常");
-            return "index";
+            e.printStackTrace();
         }
 
     }
