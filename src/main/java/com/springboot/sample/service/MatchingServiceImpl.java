@@ -142,9 +142,27 @@ public class MatchingServiceImpl {
      * */
     public List<CustomerService> waitHandler(List<UserFlowMeiQiaWrapper> userFlowMeiQiaWrapperList, List<UserFlowFourWrapper> userFlowFourWrapperList, List<UserFlowCallAWrapper> userFlowCallAWrapperList) {
         List<CustomerService> waitHandlerList = new ArrayList<>();
-        for (UserFlowMeiQiaWrapper userFlowMeiQiaWrapper : userFlowMeiQiaWrapperList) {
-            if (MatchResultCauseEnum.DUPLICATE == userFlowMeiQiaWrapper.getMatchResult().getMatchResultCauseEnum()) {
-                waitHandlerList.addAll(userFlowMeiQiaWrapper.getMatchResult().getCustomerServices());
+        if (null != userFlowMeiQiaWrapperList) {
+            for (UserFlowMeiQiaWrapper userFlowMeiQiaWrapper : userFlowMeiQiaWrapperList) {
+                if (MatchResultCauseEnum.DUPLICATE == userFlowMeiQiaWrapper.getMatchResult().getMatchResultCauseEnum()) {
+                    waitHandlerList.addAll(userFlowMeiQiaWrapper.getMatchResult().getCustomerServices());
+                }
+            }
+        }
+
+        if (null!= userFlowFourWrapperList){
+            for (UserFlowFourWrapper userFlowFourWrapper : userFlowFourWrapperList) {
+                if (MatchResultCauseEnum.DUPLICATE == userFlowFourWrapper.getMatchResult().getMatchResultCauseEnum()) {
+                    waitHandlerList.addAll(userFlowFourWrapper.getMatchResult().getCustomerServices());
+                }
+            }
+        }
+
+        if (null != userFlowCallAWrapperList){
+            for (UserFlowCallAWrapper userFlowCallAWrapper : userFlowCallAWrapperList) {
+                if (MatchResultCauseEnum.DUPLICATE == userFlowCallAWrapper.getMatchResult().getMatchResultCauseEnum()) {
+                    waitHandlerList.addAll(userFlowCallAWrapper.getMatchResult().getCustomerServices());
+                }
             }
         }
         return waitHandlerList;

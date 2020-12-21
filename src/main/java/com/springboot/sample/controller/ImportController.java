@@ -1,5 +1,6 @@
 package com.springboot.sample.controller;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.springboot.sample.bean.*;
 import com.springboot.sample.service.CustomerServiceReaderServiceImpl;
 import com.springboot.sample.service.MatchingServiceImpl;
@@ -13,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -35,6 +37,11 @@ public class ImportController {
 
     @Resource
     private ProcessFileService processFileService;
+
+    @Resource
+    private ExecutorService executorService;
+
+
     /**
      * 上传文件
      */
@@ -43,22 +50,19 @@ public class ImportController {
         try {
             String[] filePaths = processFileService.uploadFile(userFile, customerFile);
             Map<String, List<CustomerService>> group = customerServiceReaderServiceImpl.group(customerServiceReaderServiceImpl.readerCustomerExcel(filePaths[1]));
+
+            Object[] parseDataObject = parseData(filePaths[0], group);
             // 美洽数据
-            List<UserFlowMeiQia> userFlowMeiQiaList = userFlowReaderServiceImpl.readerUserFlowMeiQiaExcel(filePaths[0]);
-            List<UserFlowMeiQiaWrapper> userFlowMeiQiaWrapperList = matchingService.meiQiaMatch(userFlowMeiQiaList, group);
+            List<UserFlowMeiQiaWrapper> userFlowMeiQiaWrapperList = (List<UserFlowMeiQiaWrapper>) parseDataObject[0];
 
             // 400数据
-            List<UserFlowFour> userFlowFourList = userFlowReaderServiceImpl.readerUserFlowFourExcel(filePaths[0]);
-            List<UserFlowFourWrapper> userFlowFourWrapperList = matchingService.fourMatch(userFlowFourList,group);
+            List<UserFlowFourWrapper> userFlowFourWrapperList = (List<UserFlowFourWrapper>) parseDataObject[1];
 
-            // 电话A客
-            List<UserFlowCallA> userFlowCallAList = userFlowReaderServiceImpl.readerUserFlowCallAExcel(filePaths[0]);
-            List<UserFlowCallAWrapper> userFlowCallAWrapperList = matchingService.callAMatch(userFlowCallAList, group);
-
+            // 电话A客数据
+            List<UserFlowCallAWrapper> userFlowCallAWrapperList = (List<UserFlowCallAWrapper>) parseDataObject[2];
 
             //待处理
-            List<?> waitHandlerList = matchingService.waitHandler(userFlowMeiQiaWrapperList, userFlowFourWrapperList, userFlowCallAWrapperList);
-
+            List<CustomerService> waitHandlerList = matchingService.waitHandler(userFlowMeiQiaWrapperList, userFlowFourWrapperList, userFlowCallAWrapperList);
 
             log.info("1111");
             return "index";
@@ -69,6 +73,66 @@ public class ImportController {
 
     }
 
+
+    private Object[] parseData(String filePath, Map<String, List<CustomerService>> group) {
+        Object [] result = new Object[]{new ArrayList<UserFlowMeiQiaWrapper>(),new ArrayList<UserFlowFourWrapper>(),new ArrayList<UserFlowCallAWrapper>()};
+        FutureTask<List<UserFlowMeiQiaWrapper>> futureTaskMeiQia = new FutureTask<>(new Callable() {
+            @Override
+            public List<UserFlowMeiQiaWrapper> call() throws Exception {
+                List<UserFlowMeiQia> userFlowMeiQiaList = userFlowReaderServiceImpl.readerUserFlowMeiQiaExcel(filePath);
+                List<UserFlowMeiQiaWrapper> userFlowMeiQiaWrapperList = matchingService.meiQiaMatch(userFlowMeiQiaList, group);
+                return userFlowMeiQiaWrapperList;
+            }
+        });
+
+
+        FutureTask<List<UserFlowFourWrapper>> futureTaskFour = new FutureTask<>(new Callable<List<UserFlowFourWrapper>>() {
+            @Override
+            public List<UserFlowFourWrapper> call() throws Exception {
+                List<UserFlowFour> userFlowFourList = userFlowReaderServiceImpl.readerUserFlowFourExcel(filePath);
+                List<UserFlowFourWrapper> userFlowFourWrapperList = matchingService.fourMatch(userFlowFourList, group);
+                return userFlowFourWrapperList;
+            }
+        });
+
+
+        FutureTask<List<UserFlowCallAWrapper>> futureTaskCallA = new FutureTask<>(new Callable<List<UserFlowCallAWrapper>>() {
+            @Override
+            public List<UserFlowCallAWrapper> call() throws Exception {
+                List<UserFlowCallA> userFlowCallAList = userFlowReaderServiceImpl.readerUserFlowCallAExcel(filePath);
+                List<UserFlowCallAWrapper> userFlowCallAWrapperList = matchingService.callAMatch(userFlowCallAList, group);
+                return userFlowCallAWrapperList;
+            }
+        });
+
+        executorService.execute(futureTaskMeiQia);
+        executorService.execute(futureTaskFour);
+        executorService.execute(futureTaskCallA);
+        try {
+            result[0] = futureTaskMeiQia.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            result[1] = futureTaskFour.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            result[2] = futureTaskCallA.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
 
 
 }
