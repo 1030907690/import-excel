@@ -69,7 +69,7 @@ public class ImportController {
             List<UserFlowCallAWrapper> userFlowCallAWrapperList = (List<UserFlowCallAWrapper>) parseDataObject[2];
             //待处理
             List<CustomerService> waitHandlerList = matchingService.waitHandler(userFlowMeiQiaWrapperList, userFlowFourWrapperList, userFlowCallAWrapperList);
-            Workbook workbook = userFlowExportServiceImpl.userFlowExportExcel(excelTemplate);
+            Workbook workbook = userFlowExportServiceImpl.userFlowExportExcel(excelTemplate, userFlowMeiQiaWrapperList,   userFlowFourWrapperList,   userFlowCallAWrapperList,  waitHandlerList );
 
             LocalDateTime now = LocalDateTime.now();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");

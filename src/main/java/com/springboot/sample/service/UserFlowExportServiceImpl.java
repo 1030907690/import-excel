@@ -2,6 +2,10 @@ package com.springboot.sample.service;
 
 import cn.afterturn.easypoi.excel.ExcelExportUtil;
 import cn.afterturn.easypoi.excel.entity.TemplateExportParams;
+import com.springboot.sample.bean.CustomerService;
+import com.springboot.sample.bean.UserFlowCallAWrapper;
+import com.springboot.sample.bean.UserFlowFourWrapper;
+import com.springboot.sample.bean.UserFlowMeiQiaWrapper;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +23,7 @@ public class UserFlowExportServiceImpl {
 
     private String templateUrl = "D:\\work\\excel\\temp\\用户全流程服务跟踪表模板 12.16（终）template.xlsx";
 
-    public Workbook userFlowExportExcel(String templateUrl) throws IOException {
+    public Workbook userFlowExportExcel(String templateUrl, List<UserFlowMeiQiaWrapper> userFlowMeiQiaWrapperList, List<UserFlowFourWrapper> userFlowFourWrapperList, List<UserFlowCallAWrapper> userFlowCallAWrapperList, List<CustomerService> waitHandlerList) throws IOException {
         TemplateExportParams params = new TemplateExportParams(templateUrl);
         params.setSheetNum(new Integer[]{0, 1, 2, 3});
         Map<String, Object> map = new HashMap<>();
@@ -61,7 +65,7 @@ public class UserFlowExportServiceImpl {
     public static void main(String[] args) {
         UserFlowExportServiceImpl userFlowExportServiceImpl = new UserFlowExportServiceImpl();
         try {
-            userFlowExportServiceImpl.userFlowExportExcel(userFlowExportServiceImpl.templateUrl);
+            userFlowExportServiceImpl.userFlowExportExcel(userFlowExportServiceImpl.templateUrl,null,null,null,null);
         } catch (IOException e) {
             e.printStackTrace();
         }
