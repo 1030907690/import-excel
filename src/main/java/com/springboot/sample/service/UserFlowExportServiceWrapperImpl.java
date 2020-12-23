@@ -9,51 +9,48 @@ import com.springboot.sample.bean.UserFlowFourWrapper;
 import com.springboot.sample.bean.UserFlowMeiQiaWrapper;
 import com.springboot.sample.common.type.MatchResultCauseEnum;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-@Deprecated
 @Service
-public class UserFlowExportServiceImpl {
+public class UserFlowExportServiceWrapperImpl {
 
+    @Resource
+    private UserFlowExportServiceImpl userFlowExportServiceImpl;
     private String templateUrl = "D:\\work\\excel\\temp\\用户全流程服务跟踪表模板 12.16（终）template.xlsx";
 
-    public Workbook userFlowExportExcel(String templateUrl, List<UserFlowMeiQiaWrapper> userFlowMeiQiaWrapperList, List<UserFlowFourWrapper> userFlowFourWrapperList, List<UserFlowCallAWrapper> userFlowCallAWrapperList, List<CustomerService> waitHandlerList) throws IOException {
-        TemplateExportParams params = new TemplateExportParams(templateUrl);
-        params.setSheetNum(new Integer[]{0, 1, 2, 3});
-        Map<String, Object> map = new HashMap<>();
-        List<Map<String, Object>> meiQiaListMap = new ArrayList<>();
-        meiQiaSheetSetPropertyValues(meiQiaListMap, userFlowMeiQiaWrapperList);
-        map.put("meiQiaList", meiQiaListMap);
+    @Value("${excel.file.path.prefix}")
+    private String excelFilePathPrefix;
 
-        List<Map<String, Object>> fourListMap = new ArrayList<>();
-        fourSheetSetPropertyValues(fourListMap, userFlowFourWrapperList);
-        map.put("fourList", fourListMap);
+    @Value("${excel.download.url.prefix}")
+    private String excelDownloadUrlPrefix;
 
-
-        List<Map<String, Object>> callAListMap = new ArrayList<>();
-        callASheetSetPropertyValues(callAListMap, userFlowCallAWrapperList);
-        map.put("callAList", callAListMap);
-
-        List<Map<String, Object>> waitHandlerListMap = new ArrayList<>();
-        waitHandlerSheetSetPropertyValues(waitHandlerListMap, waitHandlerList);
-        map.put("waitHandlerList", waitHandlerListMap);
-
-        Workbook workbook = ExcelExportUtil.exportExcel(params, map);
-       /* File file = new File(System.getProperty("user.dir"), "out");
+    public String userFlowExportExcel(String templateUrl, List<UserFlowMeiQiaWrapper> userFlowMeiQiaWrapperList, List<UserFlowFourWrapper> userFlowFourWrapperList, List<UserFlowCallAWrapper> userFlowCallAWrapperList, List<CustomerService> waitHandlerList) throws IOException {
+        Workbook workbook = userFlowExportServiceImpl.userFlowExportExcel(templateUrl, userFlowMeiQiaWrapperList, userFlowFourWrapperList, userFlowCallAWrapperList, waitHandlerList);
+        File file = new File(excelFilePathPrefix, "out");
         if (!file.exists()) {
             file.mkdir();
         }
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         String formatDateTime = now.format(formatter);
-        String filePath = file.getPath() + File.separator + formatDateTime + ".xlsx";
+        String fileName = formatDateTime + ".xlsx";
+        String filePath = file.getPath() + File.separator + fileName;
         FileOutputStream fos = new FileOutputStream(filePath);
         workbook.write(fos);
-        fos.close();*/
-        return workbook;
+        fos.close();
+        return excelDownloadUrlPrefix + fileName;
     }
 
     private void waitHandlerSheetSetPropertyValues(List<Map<String, Object>> waitHandlerListMap, List<CustomerService> waitHandlerList) {
@@ -92,7 +89,7 @@ public class UserFlowExportServiceImpl {
 
 
     public static void main(String[] args) {
-        UserFlowExportServiceImpl userFlowExportServiceImpl = new UserFlowExportServiceImpl();
+        UserFlowExportServiceWrapperImpl userFlowExportServiceImpl = new UserFlowExportServiceWrapperImpl();
         try {
             userFlowExportServiceImpl.userFlowExportExcel(userFlowExportServiceImpl.templateUrl, null, null, null, null);
         } catch (IOException e) {

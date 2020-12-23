@@ -1,5 +1,7 @@
 server:
-  port: 8080
+  port: 8081
+  servlet:
+    context-path: /api
 
 spring:
   #thymeleaf
@@ -23,3 +25,12 @@ spring:
 
 excel:
   template: D:/work/excel/temp/用户全流程服务跟踪表模板 12.16（终）template.xlsx
+  file:
+    path:
+      prefix: D:/work/import-excel
+  download:
+    url:
+      prefix: https://www.baidu.com/
+vue:
+  cross:
+    config: http://localhost:8080
