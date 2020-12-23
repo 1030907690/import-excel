@@ -27,10 +27,10 @@ excel:
   template: D:/work/excel/temp/用户全流程服务跟踪表模板 12.16（终）template.xlsx
   file:
     path:
-      prefix: D:/work/import-excel
+      prefix: D:/software/openresty-1.15.8.2-win64/html
   download:
     url:
-      prefix: https://www.baidu.com/
+      prefix: http://localhost/out/
 vue:
   cross:
-    config: http://localhost:8080
+    config: http://localhost:8080,http://localhost:8082
